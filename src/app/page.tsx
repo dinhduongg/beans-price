@@ -10,6 +10,9 @@ export default function Home() {
         <Link href="/calculate" className="p-2 border border-[#3498db] w-full text-center rounded text-sm flex items-center justify-center bg-[#3498db] text-white">
           Tính tiền
         </Link>
+        <Link href="/products" className="col-span-2 p-2 border border-[#3498db] w-full text-center rounded text-sm flex items-center justify-center bg-[#3498db] text-white">
+          Danh sách sản phẩm
+        </Link>
       </div>
     </div>
   )

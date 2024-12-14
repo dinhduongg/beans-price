@@ -5,11 +5,11 @@ import data from '~/public/data/data.json'
 import ClientComp from './components/ClientComp'
 
 export const metadata: Metadata = {
-  title: 'Thêm sản phẩm',
-  description: 'Trang thêm sản phẩm',
+  title: 'Danh sách sản phẩm',
+  description: 'Trang danh sách sản phẩm',
 }
 
-export default function CreateProduct() {
+export default function Products() {
   const parsed = parseData(data)
 
   return <ClientComp products={parsed} />

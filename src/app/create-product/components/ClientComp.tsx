@@ -1,13 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 
+import { envConfig } from '@/config/envConfig'
 import { Product } from '@/type/global.type'
+import { cn } from '@/utilities/classNames'
 import { isExistProduct } from '@/utilities/isExistProduct'
 
 type ClientCompProps = {
   products: Product[]
+}
+
+interface ErrorObject {
+  [key: string]: string // Lỗi gắn với từng input theo tên
 }
 
 export default function ClientComp(props: ClientCompProps) {
@@ -19,11 +25,14 @@ export default function ClientComp(props: ClientCompProps) {
     price: '',
     unit: '',
   })
-  const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState<ErrorObject>({
     name: '',
     price: '',
     unit: '',
   })
+
+  // Tạo refs cho các input
+  const inputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({})
 
   const reset = () => {
     setState({
@@ -63,6 +72,21 @@ export default function ClientComp(props: ClientCompProps) {
 
     setErrors(errors)
     if (Object.keys(errors).some((key) => errors[key as keyof typeof errors])) {
+      const errorFields = Object.keys(errors)
+
+      let begin = 0
+
+      if (errorFields.length > 0) {
+        let errorField = errorFields[begin]
+
+        while (errors[errorField as keyof typeof errors] == '') {
+          begin++
+          errorField = errorFields[begin]
+        }
+
+        inputRefs.current[errorField]?.focus()
+      }
+
       return true
     } else {
       return false
@@ -88,26 +112,29 @@ export default function ClientComp(props: ClientCompProps) {
       id: String(Date.now()),
       name: state.name,
       price: Number(state.price),
-      unit: state.unit,
+      unit: state.unit.toLowerCase(),
     }
 
     try {
       setLoading(true)
 
-      const res = await fetch(`http://localhost:3000/api/upload`, {
+      const res = await fetch(`${envConfig.url}/api/upload`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${envConfig.token}`,
         },
         body: JSON.stringify({ products: [...clone, newProduct] }),
       })
 
       const dataRes = await res.json()
 
+      if (res.status !== 200) {
+        toast.error(dataRes.message)
+      }
+
       toast.success(dataRes.message)
       reset()
-    } catch {
-      toast.error('Có lỗi xảy ra')
     } finally {
       setLoading(false)
     }
@@ -119,17 +146,50 @@ export default function ClientComp(props: ClientCompProps) {
       <form onSubmit={handleSubmit} className="mt-2 space-y-4">
         <div>
           <label>Tên sản phẩm</label>
-          <input type="text" name="name" value={state.name} onChange={handleChange} className="w-full outline-none border rounded px-2 py-1" />
+          <input
+            type="text"
+            name="name"
+            ref={(el) => {
+              inputRefs.current['name'] = el
+            }}
+            value={state.name}
+            onChange={handleChange}
+            className={cn('w-full outline-none border rounded px-2 py-1', {
+              'border-red-500': errors.name && errors.name.length > 0,
+            })}
+          />
           {errors.name && <p className="text-red-500 text-xs">{errors.name}</p>}
         </div>
         <div>
           <label>Giá sản phẩm</label>
-          <input type="number" name="price" value={state.price} onChange={handleChange} className="w-full outline-none border rounded px-2 py-1" />
+          <input
+            type="number"
+            name="price"
+            ref={(el) => {
+              inputRefs.current['price'] = el
+            }}
+            value={state.price}
+            onChange={handleChange}
+            className={cn('w-full outline-none border rounded px-2 py-1', {
+              'border-red-500': errors.price && errors.price.length > 0,
+            })}
+          />
           {errors.price && <p className="text-red-500 text-xs">{errors.price}</p>}
         </div>
         <div>
           <label>Đơn vị (kg, ràng, gói, ...)</label>
-          <input type="text" name="unit" value={state.unit} onChange={handleChange} className="w-full outline-none border rounded px-2 py-1" />
+          <input
+            type="text"
+            name="unit"
+            ref={(el) => {
+              inputRefs.current['unit'] = el
+            }}
+            value={state.unit}
+            onChange={handleChange}
+            className={cn('w-full outline-none border rounded px-2 py-1', {
+              'border-red-500': errors.unit && errors.unit.length > 0,
+            })}
+          />
           {errors.unit && <p className="text-red-500 text-xs">{errors.unit}</p>}
         </div>
         <button disabled={loading} type="submit" className="w-full bg-[#15ad1a] text-white rounded py-1">
