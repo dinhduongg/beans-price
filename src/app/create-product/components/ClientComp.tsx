@@ -142,7 +142,6 @@ export default function ClientComp(props: ClientCompProps) {
 
   return (
     <div className="p-1 text-sm">
-      <h2 className="text-lg font-bold">Thêm sản phẩm</h2>
       <form onSubmit={handleSubmit} className="mt-2 space-y-4">
         <div>
           <label>Tên sản phẩm</label>

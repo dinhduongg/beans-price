@@ -6,7 +6,7 @@ import { numberUnit } from '@/utilities/number'
 type ProductItemProps = {
   index: number
   product: Product
-  handleDelete: () => Promise<void>
+  handleDelete: (id: string) => Promise<void>
   updateProduct: (product: Product) => void
 }
 
@@ -24,7 +24,7 @@ export default function ProductItem(props: ProductItemProps) {
         <div className="text-xs" onClick={() => updateProduct(product)}>
           Sửa
         </div>
-        <div className="text-xs text-red-500" onClick={handleDelete}>
+        <div className="text-xs text-red-500" onClick={() => handleDelete(product.id)}>
           Xóa
         </div>
       </div>

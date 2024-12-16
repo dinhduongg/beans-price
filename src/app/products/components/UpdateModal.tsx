@@ -35,6 +35,20 @@ export default function UpdateModal(props: UpdateModalProps) {
     unit: '',
   })
 
+  const reset = () => {
+    setState({
+      name: '',
+      price: '',
+      unit: '',
+    })
+    setErrors({
+      name: '',
+      price: '',
+      unit: '',
+    })
+    setIsChangeName(false)
+  }
+
   // Tạo refs cho các input
   const inputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({})
 
@@ -130,6 +144,7 @@ export default function UpdateModal(props: UpdateModalProps) {
 
       toast.success(dataRes.message)
       closeModal()
+      reset()
     } finally {
       setLoading(false)
     }
@@ -208,7 +223,7 @@ export default function UpdateModal(props: UpdateModalProps) {
               {errors.unit && <p className="text-red-500 text-xs">{errors.unit}</p>}
             </div>
             <button disabled={loading} type="submit" className="w-full bg-[#15ad1a] text-white rounded py-1 text-sm">
-              Cập nhật sản phẩm
+              Cập nhật
             </button>
           </form>
         </div>

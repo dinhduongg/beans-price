@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 
@@ -20,6 +21,8 @@ export default function ClientComp(props: ClientCompProps) {
   const [searchValue, setSearchValue] = useState('')
   const [product, setProduct] = useState<Product | null>(null)
 
+  const router = useRouter()
+
   const updateProduct = (product: Product) => {
     setProduct(product)
     setOpenModal(true)
@@ -30,11 +33,13 @@ export default function ClientComp(props: ClientCompProps) {
     setProduct(null)
   }
 
-  const handleDelete = async () => {
-    if (!confirm('Xóa sản phẩm này?')) {
+  const handleDelete = async (id: string) => {
+    if (confirm('Xóa sản phẩm này?')) {
       const clone = [...products]
 
-      const newProducts = clone.filter((item) => item.id !== product?.id)
+      const newProducts = clone.filter((item) => item.id !== id)
+
+      console.log(newProducts)
 
       const res = await fetch(`${envConfig.url}/api/upload`, {
         method: 'POST',
@@ -52,19 +57,24 @@ export default function ClientComp(props: ClientCompProps) {
       }
 
       toast.success(dataRes.message)
+      router.refresh()
     }
   }
 
   return (
     <div>
-      <div className="sticky top-0 bg-white">
-        <h1 className="p-2 border-b text-center font-bold text-lg">Danh sách sản phẩm</h1>
-        <div className="px-1">
+      <div className="px-1 py-2 sticky top-[44px] bg-white border-b">
+        <div className="relative">
           <input type="text" className="w-full p-1 outline-none rounded border" placeholder="Tìm sản phẩm" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+          {searchValue.length > 0 && (
+            <div className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center text-xl" onClick={() => setSearchValue('')}>
+              <i className="bx bx-x"></i>
+            </div>
+          )}
         </div>
       </div>
       {products
-        .filter((item) => cleanText(item.name).includes(cleanText(searchValue)))
+        .filter((item) => cleanText(item.name.toLowerCase()).includes(cleanText(searchValue.toLowerCase())))
         .map((product, index) => (
           <ProductItem key={product.id} product={product} index={index} updateProduct={updateProduct} handleDelete={handleDelete} />
         ))}
