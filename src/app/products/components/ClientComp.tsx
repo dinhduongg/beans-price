@@ -5,6 +5,7 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 
 import { envConfig } from '@/config/envConfig'
+import { useOrigin } from '@/hooks/useOrigin'
 import { Product } from '@/type/global.type'
 import { cleanText } from '@/utilities/cleanText'
 import ProductItem from './ProductItem'
@@ -22,6 +23,7 @@ export default function ClientComp(props: ClientCompProps) {
   const [product, setProduct] = useState<Product | null>(null)
 
   const router = useRouter()
+  const origin = useOrigin()
 
   const updateProduct = (product: Product) => {
     setProduct(product)
@@ -41,7 +43,7 @@ export default function ClientComp(props: ClientCompProps) {
 
       console.log(newProducts)
 
-      const res = await fetch(`${envConfig.url}/api/upload`, {
+      const res = await fetch(`${origin}/api/upload`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

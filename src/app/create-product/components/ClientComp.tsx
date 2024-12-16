@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 
 import { envConfig } from '@/config/envConfig'
+import { useOrigin } from '@/hooks/useOrigin'
 import { Product } from '@/type/global.type'
 import { cn } from '@/utilities/classNames'
 import { isExistProduct } from '@/utilities/isExistProduct'
@@ -30,6 +31,8 @@ export default function ClientComp(props: ClientCompProps) {
     price: '',
     unit: '',
   })
+
+  const origin = useOrigin()
 
   // Tạo refs cho các input
   const inputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({})
@@ -118,7 +121,7 @@ export default function ClientComp(props: ClientCompProps) {
     try {
       setLoading(true)
 
-      const res = await fetch(`${envConfig.url}/api/upload`, {
+      const res = await fetch(`${origin}/api/upload`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

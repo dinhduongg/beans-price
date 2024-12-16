@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 
 import { envConfig } from '@/config/envConfig'
+import { useOrigin } from '@/hooks/useOrigin'
 import { Product } from '@/type/global.type'
 import { cn } from '@/utilities/classNames'
 import { isExistProduct } from '@/utilities/isExistProduct'
@@ -34,6 +35,8 @@ export default function UpdateModal(props: UpdateModalProps) {
     price: '',
     unit: '',
   })
+
+  const origin = useOrigin()
 
   const reset = () => {
     setState({
@@ -127,7 +130,7 @@ export default function UpdateModal(props: UpdateModalProps) {
     try {
       setLoading(true)
 
-      const res = await fetch(`${envConfig.url}/api/upload`, {
+      const res = await fetch(`${origin}/api/upload`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
