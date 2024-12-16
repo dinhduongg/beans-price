@@ -10,10 +10,6 @@ export async function POST(req: Request) {
     return Response.json({ message: 'Unauthorized' }, { status: 401 })
   }
 
-  const fileName = 'data.json'
-
-  const path = `${process.cwd()}/public/data/${fileName}`
-
   if (products) {
     // Ensure the directory exists
     const dir = `${process.cwd()}/public/data/`
@@ -22,6 +18,8 @@ export async function POST(req: Request) {
     }
 
     // Write data to file, creating or overwriting it
+    const fileName = 'data.json'
+    const path = `${process.cwd()}/public/data/${fileName}`
     fs.writeFileSync(path, JSON.stringify(products, null, 2))
   }
 
