@@ -11,16 +11,21 @@ export async function POST(req: Request) {
   }
 
   if (products) {
+    const dirPath = `${process.cwd()}/public/data`
+    const filePath = `${dirPath}/data.json`
+
     // Ensure the directory exists
-    const dir = `${process.cwd()}/public/data/`
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true })
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true })
     }
 
-    // Write data to file, creating or overwriting it
-    const fileName = 'data.json'
-    const path = `${process.cwd()}/public/data/${fileName}`
-    fs.writeFileSync(path, JSON.stringify(products, null, 2))
+    // Ensure the file exists
+    if (!fs.existsSync(filePath)) {
+      const defaultData = [] as unknown
+      fs.writeFileSync(filePath, JSON.stringify(defaultData, null, 2))
+    }
+
+    fs.writeFileSync(filePath, JSON.stringify(products, null, 2))
   }
 
   return Response.json({ message: 'Thành công' }, { status: 200 })
