@@ -10,6 +10,8 @@ export async function POST(req: Request) {
     return Response.json({ message: 'Unauthorized' }, { status: 401 })
   }
 
+  console.log(products)
+
   const path = `${process.cwd()}/public/data/data.json`
 
   if (products) {
