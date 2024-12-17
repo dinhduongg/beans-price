@@ -2,8 +2,8 @@ import { Metadata } from 'next'
 
 import Link from 'next/link'
 
+import { getProducts } from '@/actions/get-products'
 import { parseData } from '@/utilities/parseData'
-import data from '~/public/data/data.json'
 import ClientComp from './components/ClientComp'
 
 export const metadata: Metadata = {
@@ -11,7 +11,8 @@ export const metadata: Metadata = {
   description: 'Trang thêm sản phẩm',
 }
 
-export default function CreateProduct() {
+export default async function CreateProduct() {
+  const data = await getProducts()
   const parsed = parseData(data)
 
   return (
